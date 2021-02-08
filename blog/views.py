@@ -9,7 +9,7 @@ from rest_framework import status
 
 
 def serve_test(request):
-    return HttpResponse("XDDDD")
+    return HttpResponse("server working...")
 
 
 def get_all_posts(request):
@@ -40,3 +40,13 @@ def update_post(request, id_post):
     if request.method == 'GET':
         serializer_post = PostSerializer(post_object)
         return JsonResponse(serializer_post.data)
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer_post = PostSerializer(post_object, data=data)
+        if serializer_post.is_valid():
+            serializer_post.save()
+            return JsonResponse(serializer_post.data, status=201)
+        return JsonResponse(serializer_post.errors, status=400)
+    elif request.method == 'DELETE':
+        post_object.delete()
+        return HttpResponse(status=204)
